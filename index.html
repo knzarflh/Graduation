@@ -19,10 +19,13 @@
       font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(to bottom, #fff7f0, #ffe4c4);
       color: #333;
-      overflow: hidden;
     }
 
     #welcome-screen {
+      position: fixed; /* Fix so it stays top layer and clickable */
+      z-index: 10;
+      top: 0;
+      left: 0;
       height: 100vh;
       width: 100vw;
       background: linear-gradient(135deg, #ffde8a, #ffcc33);
@@ -154,7 +157,6 @@
 
     .photo {
       display: flex;
-      flex-direction: row;
       gap: 2rem;
       background: #fff;
       border-radius: 12px;
@@ -164,8 +166,19 @@
       flex-wrap: nowrap;
       overflow: hidden;
       opacity: 0;
-      transform: translateX(100px);
       transition: transform 1s ease, opacity 1s ease;
+    }
+
+    /* For odd photos, appear from left */
+    .photo.odd {
+      flex-direction: row-reverse;
+      transform: translateX(-100px);
+    }
+
+    /* For even photos, appear from right */
+    .photo.even {
+      flex-direction: row;
+      transform: translateX(100px);
     }
 
     .photo.visible {
@@ -173,22 +186,9 @@
       transform: translateX(0);
     }
 
-    /* Alternate photos direction and animation from left */
-    .photo:nth-child(even) {
-      flex-direction: row-reverse;
-      opacity: 0;
-      transform: translateX(-100px);
-    }
-
-    .photo:nth-child(even).visible {
-      opacity: 1;
-      transform: translateX(0);
-    }
-
     .photo-image {
       flex: 1 1 280px;
       background-color: #fff0d6;
-      /* brighter warm background */
       border-radius: 16px;
       display: flex;
       align-items: center;
@@ -198,7 +198,8 @@
       overflow: hidden;
       transition: transform 0.3s ease;
       position: relative;
-      aspect-ratio: 16 / 9;
+      /* Removed aspect-ratio to allow natural image ratio */
+      height: auto; /* let height be automatic */
       border: none;
       box-shadow: none;
       filter: none;
@@ -206,15 +207,15 @@
 
     .photo-image:hover {
       transform: scale(1.07);
-      box-shadow: 0 6px 25px rgba(255 140, 66, 0.8);
+      box-shadow: 0 6px 25px rgba(255, 140, 66, 0.8);
       border-color: #ff8c42;
       filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.18));
     }
 
     .photo-image img {
       width: 100%;
-      height: 100%;
-      object-fit: cover;
+      height: auto; /* keep natural image aspect ratio */
+      object-fit: contain;
       border-radius: 12px;
       display: block;
       max-width: 100%;
@@ -343,7 +344,6 @@
 
       #welcome-photo {
         width: 40vw;
-        /* slightly bigger portrait on mobile */
       }
     }
   </style>
@@ -358,7 +358,7 @@
 
   <main id="main-content" tabindex="-1" aria-label="Isi surat">
     <audio id="background-music" loop>
-      <source src="Musiknya.mp3" type="audio/mpeg" />
+      <source src="musiknya.mp3" type="audio/mpeg" />
       Your browser does not support the audio element.
     </audio>
 
@@ -369,7 +369,7 @@
       </p>
     </header>
 
-    <section class="photo-section">
+    <section class="photo-section" id="photo-section">
       <div class="photo">
         <div class="photo-image">
           <img src="1fotbar1.jpg" alt="Foto 1" />
@@ -395,43 +395,42 @@
           </p>
         </div>
       </div>
-       <div class="photo">
-      <div class="photo-image">
-        <img src="3typography.jpg" alt="Foto 3" />
+      <div class="photo">
+        <div class="photo-image">
+          <img src="3typography.jpg" alt="Foto 3" />
+        </div>
+        <div class="photo-content">
+          <small>Desember 2023 – Festival Cahaya</small>
+          <h3>Typography</h3>
+          <p>
+            Masa masa aku suka banget buat typography salah satunya karena banyak stok kata kata darimu (dari bintang yang mbok kasi si) dan dulu sering banget kamu revisi, gini ternyata rasanya ngomongin desain sama orang perfeksionis wkwkwk.
+          </p>
+        </div>
       </div>
-      <div class="photo-content">
-        <small>Desember 2023 – Festival Cahaya</small>
-        <h3>Typography</h3>
-        <p>
-          Masa masa aku suka banget buat typography salah satunya karena banyak stok kata kata darimu (dari bintang yang mbok kasi si) dan dulu sering banget kamu revisi, gini ternyata rasanya ngomongin desain sama orang perfeksionis wkwkwk.
-        </p>
-      </div>
-    </div>
 
-    <div class="photo">
-      <div class="photo-image">
-        <img src="4cap3jari.jpg" alt="Foto 2" />
+      <div class="photo">
+        <div class="photo-image">
+          <img src="4cap3jari.jpg" alt="Foto 2" />
+        </div>
+        <div class="photo-content">
+          <small>21 Oktober 2022 – MTsN 2 Malang</small>
+          <h3>Cap 3 Jari</h3>
+          <p>
+            Setelah beberapa bulan gak meet, baru beberapa bulan juga, ntah siapa yang ngambil foto ini, tapi sayang banget dulu gk bisa berlama lama, soale kamu harus segera pulang tapi aku baru dateng huhuhu
+          </p>
+        </div>
       </div>
-      <div class="photo-content">
-        <small>21 Oktober 2022 – MTsN 2 Malang</small>
-        <h3>Cap 3 Jari</h3>
-        <p>
-          Setelah beberapa bulan gak meet, baru beberapa bulan juga, ntah siapa yang ngambil foto ini, tapi sayang banget dulu gk bisa berlama lama, soale kamu harus segera pulang tapi aku baru dateng huhuhu
-        </p>
+      <div class="photo">
+        <div class="photo-image">
+          <img src="menang madfest.jpg" alt="Foto 2">
+        </div>
+        <div class="photo-content">
+          <small>12 Agustus 2023 - Gading Serpong, Banten</small>
+          <h3>Menang Madfest</h3>
+          <p>Wiii, congrats ya buat prestasi nasionalnya, padahal dulu awal awal masuk man ngambis olim, eh rejekinya ternyata di Madfest, sekali lagi selamat ya</p>
+        </div>
       </div>
-    </div>
-    <div class="photo">
-      <div class="photo-image">
-        <img src="menang madfest.jpg" alt="Foto 2">
-      </div>
-      <div class="photo-content">
-        <small>12 Agustus 2023 - Gading Serpong, Banten</small>
-        <h3>Menang Madfest</h3>
-        <p>Wiii, congrats ya buat prestasi nasionalnya, padahal dulu awal awal masuk man ngambis olim, eh rejekinya ternyata di Madfest, sekali lagi selamat ya</p>
-      </div>
-    </div>
-
-    <div class="photo">
+      <div class="photo">
       <div class="photo-image">
         <img src="ketrima afs.jpg" alt="Foto 2">
       </div>
@@ -584,7 +583,6 @@
         <p>and finally kamu ketrima di beasiswa garuda, 4 tahun beda negara ni bakalan wkwk, gapapa apapun demi masa depan yang cerahkan, selamat yaa sekali lagi, dan selamat menimba ilmu di Aussie, negara yg kamu pengen, jangan lupa ntar foto" yang banyak yaa, enjoy your study bro :) </p>
       </div>
     </div>
-
     </section>
 
     <footer>
@@ -598,43 +596,66 @@
   </main>
 
   <script>
-    
-    const openButton = document.getElementById('open-button');
-    const welcomeScreen = document.getElementById('welcome-screen');
-    const mainContent = document.getElementById('main-content');
-    const audio = document.getElementById('background-music');
+    document.addEventListener('DOMContentLoaded', () => {
+      const openButton = document.getElementById('open-button');
+      const welcomeScreen = document.getElementById('welcome-screen');
+      const mainContent = document.getElementById('main-content');
+      const audio = document.getElementById('background-music');
+      const photoSection = document.getElementById('photo-section');
 
-    openButton.addEventListener('click', () => {
-      // Hide welcome screen
-      welcomeScreen.style.display = 'none';
+      openButton.addEventListener('click', () => {
+        // Hide welcome screen
+        welcomeScreen.style.display = 'none';
 
-      // Show main content
-      mainContent.style.display = 'block';
+        // Show main content
+        mainContent.style.display = 'block';
 
-      // Animate header, photos, footer with class "visible" to trigger slide-in
-      const header = mainContent.querySelector('header');
-      const footer = mainContent.querySelector('footer');
-      header.classList.add('visible');
-      footer.classList.add('visible');
+        // Animate header and footer immediately
+        const header = mainContent.querySelector('header');
+        const footer = mainContent.querySelector('footer');
+        header.classList.add('visible');
+        footer.classList.add('visible');
 
-      const photos = mainContent.querySelectorAll('.photo');
-      photos.forEach(photo => photo.classList.add('visible'));
+        // Assign even/odd classes to photos for alternating slide directions
+        const photos = photoSection.querySelectorAll('.photo');
+        photos.forEach((photo, index) => {
+          if ((index + 1) % 2 === 1) {
+            photo.classList.add('odd');
+          } else {
+            photo.classList.add('even');
+          }
+          // Initially not visible (opacity 0, transform applied)
+          photo.classList.remove('visible');
+        });
 
-      // Focus main content for accessibility
-      mainContent.focus();
+        // Use IntersectionObserver for photos to animate on scroll
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+              }
+            });
+          }, { threshold: 0.1 }
+        );
+        photos.forEach(photo => observer.observe(photo));
 
-      // Attempt to play audio with sound on user interaction
-      audio.play().catch(() => {
-        console.warn('Autoplay failed, user interaction is required to play audio.');
+        // Focus main content for accessibility
+        mainContent.focus();
+
+        // Attempt to play audio with sound on user interaction
+        audio.play().catch(() => {
+          console.warn('Autoplay failed, user interaction is required to play audio.');
+        });
+
+        // Optional: try fullscreen to emulate immersive experience
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        }
       });
-
-      // Optional: try fullscreen to emulate immersive experience
-      if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen();
-      }
     });
   </script>
 </body>
 
 </html>
-
