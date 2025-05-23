@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hai Mayda - Surat</title>
+  <style>
+    /* Reset dan box-sizing agar padding tidak tambah ukuran */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom, #fff7f0, #ffe4c4);
+      color: #333;
+      overflow: hidden;
+    }
+
+    #welcome-screen {
+      height: 100vh;
+      width: 100vw;
+      background: linear-gradient(135deg, #ffde8a, #ffcc33);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 1rem;
+      text-align: center;
+      padding: 20px;
+      box-shadow: inset 0 0 50px 5px rgba(255 255 255 / 0.7);
+      animation: fadeSlideIn 1s ease forwards;
+    }
+
+    @keyframes fadeSlideIn {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    #welcome-screen h1 {
+      font-size: 3rem;
+      color: #6b3e00;
+      text-shadow: 0 2px 7px rgba(0, 0, 0, 0.18);
+      margin: 0;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      animation: fadeSlideIn 1.2s ease forwards;
+    }
+
+    #welcome-photo {
+      width: 180px;
+      max-width: 90vw;
+      aspect-ratio: 9 / 16;
+      object-fit: cover;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(255, 140, 66, 0.6);
+      animation: fadeSlideUp 1.4s ease forwards;
+      border: none;
+    }
+
+    @keyframes fadeSlideUp {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    #open-button {
+      padding: 1rem 3rem;
+      font-size: 1.6rem;
+      font-weight: 700;
+      background-color: #ff8c42;
+      border: none;
+      border-radius: 40px;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 6px 14px rgba(255, 140, 66, 0.7);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      user-select: none;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      animation: fadeSlideUp 1.6s ease forwards;
+      margin-top: 8px;
+    }
+
+    #open-button:hover,
+    #open-button:focus {
+      background-color: #e6732f;
+      box-shadow: 0 8px 18px rgba(230, 115, 47, 0.85);
+      outline: none;
+    }
+
+    #main-content {
+      display: none;
+      overflow-y: auto;
+      height: 100vh;
+      padding: 1rem 1rem 3rem;
+      background: #fffdf7;
+      scroll-behavior: smooth;
+    }
+
+    header {
+      text-align: center;
+      padding: 3rem 1rem 1rem;
+      background: #fff7f0;
+      opacity: 0;
+      transform: translateX(100px);
+      transition: transform 1s ease, opacity 1s ease;
+    }
+
+    header.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      color: #d2691e;
+    }
+
+    header p {
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: auto;
+      color: #555;
+    }
+
+    .photo-section {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      margin: 3rem auto;
+      max-width: 900px;
+      padding: 0 1rem;
+    }
+
+    .photo {
+      display: flex;
+      flex-direction: row;
+      gap: 2rem;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(255, 163, 95, 0.3);
+      padding: 1rem;
+      align-items: center;
+      flex-wrap: nowrap;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateX(100px);
+      transition: transform 1s ease, opacity 1s ease;
+    }
+
+    .photo.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Alternate photos direction and animation from left */
+    .photo:nth-child(even) {
+      flex-direction: row-reverse;
+      opacity: 0;
+      transform: translateX(-100px);
+    }
+
+    .photo:nth-child(even).visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .photo-image {
+      flex: 1 1 280px;
+      background-color: #fff0d6;
+      /* brighter warm background */
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem;
+      max-width: 280px;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+      position: relative;
+      aspect-ratio: 16 / 9;
+      border: none;
+      box-shadow: none;
+      filter: none;
+    }
+
+    .photo-image:hover {
+      transform: scale(1.07);
+      box-shadow: 0 6px 25px rgba(255 140, 66, 0.8);
+      border-color: #ff8c42;
+      filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.18));
+    }
+
+    .photo-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 12px;
+      display: block;
+      max-width: 100%;
+    }
+
+    .photo-content {
+      flex: 2 1 300px;
+      min-width: 0;
+      word-wrap: break-word;
+    }
+
+    .photo-content small {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #aa9048;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    .photo-content h3 {
+      margin: 0;
+      color: #8b4a08;
+      font-weight: 700;
+    }
+
+    .photo-content p {
+      margin-top: 0.5rem;
+      color: #66532c;
+      white-space: normal;
+      line-height: 1.5;
+      font-size: 1rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 3rem 1rem 2rem;
+      background: #fff7e0;
+      opacity: 0;
+      transform: translateX(-100px);
+      transition: transform 1s ease, opacity 1s ease;
+    }
+
+    footer.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .footer-content {
+      background-color: #fffbea;
+      padding: 2rem;
+      border-radius: 14px;
+      box-shadow: 0 5px 22px rgba(255, 196, 84, 0.25);
+      margin-bottom: 1.5rem;
+      color: #65512e;
+      font-size: 1.1rem;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      font-weight: 500;
+      line-height: 1.6;
+    }
+
+    footer p {
+      margin-bottom: 1.5rem;
+    }
+
+    .btn {
+      background-color: #ff8c42;
+      color: white;
+      padding: 0.75rem 2.2rem;
+      border: none;
+      border-radius: 30px;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: background-color 0.3s;
+      display: inline-block;
+      cursor: pointer;
+      box-shadow: 0 5px 14px rgba(255, 140, 66, 0.7);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+
+    .btn:hover {
+      background-color: #e6732f;
+      box-shadow: 0 7px 20px rgba(230, 115, 47, 0.85);
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 2rem;
+      }
+
+      header p {
+        font-size: 1rem;
+      }
+
+      .photo {
+        flex-direction: column !important;
+        text-align: center;
+        padding: 1rem 0.5rem;
+      }
+
+      .photo-image {
+        max-width: 100%;
+        width: 100%;
+        height: auto;
+        padding: 0;
+        margin-bottom: 1rem;
+        aspect-ratio: auto;
+        border: none;
+        box-shadow: none;
+        filter: none;
+      }
+
+      .photo-image img {
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+        object-fit: cover;
+      }
+
+      .photo-content {
+        text-align: center;
+        padding: 0 0.5rem;
+      }
+
+      #welcome-photo {
+        width: 40vw;
+        /* slightly bigger portrait on mobile */
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="welcome-screen" role="main">
+    <h1>Hai Mayda</h1>
+    <img id="welcome-photo" src="1fotbar1.jpg" alt="Foto kenangan Hai Mayda" />
+    <button id="open-button" aria-label="Buka surat">Buka Surat</button>
+  </div>
+
+  <main id="main-content" tabindex="-1" aria-label="Isi surat">
+    <audio id="background-music" loop>
+      <source src="Motor tua.mp3" type="audio/mpeg" />
+      Your browser does not support the audio element.
+    </audio>
+
+    <header>
+      <h1>Hai Mayda</h1>
+      <p>
+        Hi Brokk, Btw selamat wisuda ya, udah selesai masa sma mu, habis ini lanjut cari ilmu di Aussie + jalan jalan, nii ada sedikit kenangan dariku asekkk, eh sebelumnya mungkin gk tak tulis semua karna ngga tau dan gk nemu fotonya, jadi aku tulis yang aku tau, silahkan dibaca :)
+      </p>
+    </header>
+
+    <section class="photo-section">
+      <div class="photo">
+        <div class="photo-image">
+          <img src="1fotbar1.jpg" alt="Foto 1" />
+        </div>
+        <div class="photo-content">
+          <small>16 Juni 2022 – Wisuda MTsN 2 Malang</small>
+          <h3>Fotbar Pertama</h3>
+          <p>
+            Inget ngga foto ini?? Fotbar pertama kita (yang niat) dan pada hari itu jadi tanggal dimana awal kita bakal jarang ketemu lagi karena uda beda sekolah, dan foto itu kita post di InstaStory sampai akhirnya rame banget dm kita wkwkwk.
+          </p>
+        </div>
+      </div>
+
+      <div class="photo">
+        <div class="photo-image">
+          <img src="mastrange.jpg" alt="Foto 2" />
+        </div>
+        <div class="photo-content">
+          <small>16 Juni 2022 – Insta Story</small>
+          <h3>Aku Suka Kalimatmu</h3>
+          <p>
+            masih di tanggal yang sama, aku inget kamu kek mau ngepost ato ngga, karena gk enak sama someone, yaa tapi ujung" nya tetep di post si, btw aku suka banget sama kata katanya, bakal tak inget terus si kata katanya
+          </p>
+        </div>
+      </div>
+       <div class="photo">
+      <div class="photo-image">
+        <img src="3typography.jpg" alt="Foto 3" />
+      </div>
+      <div class="photo-content">
+        <small>Desember 2023 – Festival Cahaya</small>
+        <h3>Typography</h3>
+        <p>
+          Masa masa aku suka banget buat typography salah satunya karena banyak stok kata kata darimu (dari bintang yang mbok kasi si) dan dulu sering banget kamu revisi, gini ternyata rasanya ngomongin desain sama orang perfeksionis wkwkwk.
+        </p>
+      </div>
+    </div>
+
+    <div class="photo">
+      <div class="photo-image">
+        <img src="4cap3jari.jpg" alt="Foto 2" />
+      </div>
+      <div class="photo-content">
+        <small>21 Oktober 2022 – MTsN 2 Malang</small>
+        <h3>Cap 3 Jari</h3>
+        <p>
+          Setelah beberapa bulan gak meet, baru beberapa bulan juga, ntah siapa yang ngambil foto ini, tapi sayang banget dulu gk bisa berlama lama, soale kamu harus segera pulang tapi aku baru dateng huhuhu
+        </p>
+      </div>
+    </div>
+    <div class="photo">
+      <div class="photo-image">
+        <img src="menang madfest.jpg" alt="Foto 2">
+      </div>
+      <div class="photo-content">
+        <small>12 Agustus 2023 - Gading Serpong, Banten</small>
+        <h3>Menang Madfest</h3>
+        <p>Wiii, congrats ya buat prestasi nasionalnya, padahal dulu awal awal masuk man ngambis olim, eh rejekinya ternyata di Madfest, sekali lagi selamat ya</p>
+      </div>
+    </div>
+
+    <div class="photo">
+      <div class="photo-image">
+        <img src="ketrima afs.jpg" alt="Foto 2">
+      </div>
+      <div class="photo-content">
+        <small>6 Oktober 2023, Jakarta</small>
+        <h3>AFS Innovators</h3>
+        <p>Akhirnya yaa percobaan kedua kamu ikut afs innovators berhasil juga, aku inget dulu pas kamu gagal saat percobaan pertama, curhat segala macem, apalagi pas wawancara wifimu lag, tapi ternyata kamu ngga nyerah gitu aja, kamu coba lagi and u did it, congrats broo </p>
+      </div>
+    </div>
+
+    <div class="photo">
+      <div class="photo-image">
+        <img src="bim.jpg" alt="Foto 2">
+      </div>
+      <div class="photo-content">
+        <small>2 Desember 2023, MAN 2 Kota Malang</small>
+        <h3>Keterima BIM</h3>
+        <p>Bener bener berturut turut ya, kamu dapet pengumuman ketrima bim pas program akhir di afs, selamat ya, aku inget dulu kamu cerita lek nangis habis di interview, apalagi dulu pernah salah nilai, tapi akhirnya tanggal 2 kamu ketrima bener bener hadiah terbaik buat ultahmu gk sii </p>
+      </div>
+    </div>
+
+    <div class="photo">
+      <div class="photo-image">
+        <img src="chatuda.jpg" alt="Foto 2">
+      </div>
+      <div class="photo-content">
+        <small>4 Desember 2023 - Chat WA</small>
+        <h3>SS an WA</h3>
+        <p>Aku inget kamu pernah ngirim ini, and thats true, uda cantik, pinter lagi, dapet beasiswa bener bener kek jerome, mimpinya pun sama :) </p>
+      </div>
+    </div>
+
+    <div class="photo">
+      <div class="photo-image">
+        <img src="gantungan bim.jpg" alt="Foto 2">
+      </div>
+      <div class="photo-content">
+        <small>3 Januari 2024 - MAN 2 Kota Malang</small>
+        <h3>Hadiah Gantungan</h3>
+        <p>dan yaa gantungan ini tetep gantung di tasku, bahkan sampek tasku sobek karena kecelakaan dulu, tapi gantungan ini bakal tak jaga terus, if u know, setiap aku sepedaan dan bawa tas, aku selalu meraba ke belakang, mastiin gantungannya gak jatuh :) </p>
+      </div>
+    </div>
+
+    <div class="photo">
+      <div class="photo-image">
+        <img src="perbiman.jpg" alt="Foto 2">
+      </div>
+      <div class="photo-content">
+        <small>28 Februari 2024 - Naik Ojek</small>
+        <h3>Perbiman duniawi</h3>
+        <p>Jadi manusia tersibuk di dunia iki wkwkwk, banyak project bim, belum lagi jadi osima, sampek gini tetep zoom meskipun di jalan wkwkwk, semangat banget, apa yang ngga buat bim </p>
+      </div>
+    </div>
+
+    <div class="photo">
+      <div class="photo-image">
+        <img src="flighsumpro.jpg" alt="Foto 2">
+      </div>
+      <div class="photo-content">
+        <small>21 Juli 2024 - Pesawat</small>
+        <h3>Summer Program</h3>
+        <p>meskipun summer programnya ngga ke aussie tapi ini uda keren si, bener" meskipun ngga dapet sumpro yang ln masih dapet yg didalem negeri, aku inget kata" mu, tidak lolos sumpro, its not end of everything, jadi penyemangatku juga kata kata itu pas aku gk lolos OSN, btw makasi juga ya udah nyemangatin dan ngasi beberapa motivasi ke aku menjelang dan sesudah OSN :)</p>
+      </div>
+    </div>
+
+    <div class="photo">
+      <div class="photo-image">
+        <img src="tes ielts lagi karna kurang.jpg" alt="Foto 2">
+      </div>
+      <div class="photo-content">
+        <small>05 November 2024 - Jakarta</small>
+        <h3>Tes lagi</h3>
+        <p>Bener bener ya semangat mu gk pernah padam, aku lupa ini tes SAT atau IELTS, pokok aku ingete kamu tes lagi karna porinmu kurang, kek e IELTS de, gilak sampek semahal itu yaa, tapi aku salut sama semangatmu sii, iyalah demi Aussie</p>
+      </div>
+    </div>
+
+    <div class="photo">
+      <div class="photo-image">
+        <img src="ikut falp.jpg" alt="Foto 2">
+      </div>
+      <div class="photo-content">
+        <small>20 November 2024 - MAN 2 Kota Malang</small>
+        <h3>Ikut FALP</h3>
+        <p>Tiba tiba banget kamu ngajakin aku ikut FALP, dulu tak iya in lagi, meskipun kita sama sama gk lolos, tapi experience buat cv nya keren si, gini rasanya ternyata ribetnya buat cv, sama ngebut banget ngedit video wkwkwk</p>
+      </div>
+    </div>
+
+    <div class="photo">
+      <div class="photo-image">
+        <img src="dikira aoc.jpg" alt="Foto 2">
+      </div>
+      <div class="photo-content">
+        <small>17 Desember 2024 - Chat WA</small>
+        <h3>Dikira ikut AOC</h3>
+        <p>ini nihh, calon penghuni kursi Aoc, sampek mau di kick dari grup wkwkwk, aku belum dapet ceritanya dari kamu si gimana kronologi bisa sempet mau aoc,kapan kapan ceritain dong hehe</p>
+      </div>
+    </div>
+
+    <div class="photo">
+      <div class="photo-image">
+        <img src="mundur eligible.jpg" alt="Foto 2">
+      </div>
+      <div class="photo-content">
+        <small>17 Januari 2025 - Chat WA</small>
+        <h3>Mundur Eligible</h3>
+        <p>ini foto yang kamu kirim setelah aku ngirim kalau aku eligible, yaa ngga heran si pasti lebih memilih kulliah di luar daripada dalam negeri</p>
+      </div>
+    </div>
+
+    <div class="photo">
+      <div class="photo-image">
+        <img src="majulagi.jpg" alt="Foto 2">
+      </div>
+      <div class="photo-content">
+        <small>21 Januari 2025 - Chat WA</small>
+        <h3>Jadi Eligible</h3>
+        <p>ini nihh, tiba tiba aja, jadi eligible lagi padahal udah isi form pengunduran diri, bener" di all in semua dalam dan luar negeri</p>
+      </div>
+    </div>
+
+    <div class="photo">
+      <div class="photo-image">
+        <img src="snbpmey.jpg" alt="Foto 2">
+      </div>
+      <div class="photo-content">
+        <small>18 Maret 2025 - Chat WA</small>
+        <h3>Ketrima SNBP</h3>
+        <p>sebelumnya selamat ya ketrima di ub ( meskipun gk jadi ambil ) sementara aku ketolak, rasanya kek apalah udah osn gagal snbp gagal juga :( </p>
+      </div>
+    </div>
+
+    <div class="photo">
+      <div class="photo-image">
+        <img src="bimtolak.jpg" alt="Foto 2">
+      </div>
+      <div class="photo-content">
+        <small>24 April 2025 - Chat WA</small>
+        <h3>Ketolak BIM</h3>
+        <p>"cek tau merah" katamu kemaren pas ketolak bim, tapi meskipun merah, tapi merahmu di bim apalahh wkwkwk, beda sama orang orang yg merahnya di snbp, apalagi warna merah di snbp besar banget lagi, rasanya jlepp</p>
+      </div>
+    </div>
+
+    <div class="photo">
+      <div class="photo-image">
+        <img src="beagaruda.jpg" alt="Foto 2">
+      </div>
+      <div class="photo-content">
+        <small>28 April 2025 - Chat WA</small>
+        <h3>Keterima Beasiswa Garuda</h3>
+        <p>and finally kamu ketrima di beasiswa garuda, 4 tahun beda negara ni bakalan wkwk, gapapa apapun demi masa depan yang cerahkan, selamat yaa sekali lagi, dan selamat menimba ilmu di Aussie, negara yg kamu pengen, jangan lupa ntar foto" yang banyak yaa, enjoy your study bro :) </p>
+      </div>
+    </div>
+
+    </section>
+
+    <footer>
+      <div class="footer-content">
+        <p>
+          Nah itu dia sedikit kilas balik dari aku, sebelumnya maap ya kalau ngga bisa dateng di wisuda mu soalnya krisis motor cuy wkwkwk, sekali lagi selamat ya udah ketrima di Monash University, selamat cari ilmu di Aussie, jangan lupain orang orang yang masih di Indo ( termasuk aku wkwk) yaudah Happy Graduation ya bro, makasih udah jadi orang yg buat aku pernah ngambis banget kejar sesuatu, yaudah gitu aja sukses terus ya Mey, see yaa, sampai jumpa di lain waktu🥹🤗
+        </p>
+      </div>
+      <a href="https://wa.me/6282245264057" class="btn" target="_blank" rel="noopener noreferrer">Lanjut Whatsapp</a>
+    </footer>
+  </main>
+
+  <script>
+    
+    const openButton = document.getElementById('open-button');
+    const welcomeScreen = document.getElementById('welcome-screen');
+    const mainContent = document.getElementById('main-content');
+    const audio = document.getElementById('background-music');
+
+    openButton.addEventListener('click', () => {
+      // Hide welcome screen
+      welcomeScreen.style.display = 'none';
+
+      // Show main content
+      mainContent.style.display = 'block';
+
+      // Animate header, photos, footer with class "visible" to trigger slide-in
+      const header = mainContent.querySelector('header');
+      const footer = mainContent.querySelector('footer');
+      header.classList.add('visible');
+      footer.classList.add('visible');
+
+      const photos = mainContent.querySelectorAll('.photo');
+      photos.forEach(photo => photo.classList.add('visible'));
+
+      // Focus main content for accessibility
+      mainContent.focus();
+
+      // Attempt to play audio with sound on user interaction
+      audio.play().catch(() => {
+        console.warn('Autoplay failed, user interaction is required to play audio.');
+      });
+
+      // Optional: try fullscreen to emulate immersive experience
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen();
+      }
+    });
+  </script>
+</body>
+
+</html>
+
