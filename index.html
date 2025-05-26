@@ -22,7 +22,7 @@
     }
 
     #welcome-screen {
-      position: fixed; /* Fix so it stays top layer and clickable */
+      position: fixed; 
       z-index: 10;
       top: 0;
       left: 0;
@@ -169,13 +169,13 @@
       transition: transform 1s ease, opacity 1s ease;
     }
 
-    /* For odd photos, appear from left */
+    /* nambah foto, dari kiri */
     .photo.odd {
       flex-direction: row-reverse;
       transform: translateX(-100px);
     }
 
-    /* For even photos, appear from right */
+    /* nambah foto, dari kanan */
     .photo.even {
       flex-direction: row;
       transform: translateX(100px);
@@ -198,8 +198,8 @@
       overflow: hidden;
       transition: transform 0.3s ease;
       position: relative;
-      /* Removed aspect-ratio to allow natural image ratio */
-      height: auto; /* let height be automatic */
+      /* rasio alami */
+      height: auto; 
       border: none;
       box-shadow: none;
       filter: none;
@@ -629,19 +629,19 @@
       const photoSection = document.getElementById('photo-section');
 
       openButton.addEventListener('click', () => {
-        // Hide welcome screen
+        // Welcome Screen
         welcomeScreen.style.display = 'none';
 
-        // Show main content
+        // main content
         mainContent.style.display = 'block';
 
-        // Animate header and footer immediately
+        // Animasi header dan footer
         const header = mainContent.querySelector('header');
         const footer = mainContent.querySelector('footer');
         header.classList.add('visible');
         footer.classList.add('visible');
 
-        // Assign even/odd classes to photos for alternating slide directions
+        // Ganjil genap foto
         const photos = photoSection.querySelectorAll('.photo');
         photos.forEach((photo, index) => {
           if ((index + 1) % 2 === 1) {
@@ -653,7 +653,7 @@
           photo.classList.remove('visible');
         });
 
-        // Use IntersectionObserver for photos to animate on scroll
+        // Animasi saat scroll
         const observer = new IntersectionObserver(
           (entries) => {
             entries.forEach((entry) => {
@@ -666,15 +666,15 @@
         );
         photos.forEach(photo => observer.observe(photo));
 
-        // Focus main content for accessibility
+        // accessibility
         mainContent.focus();
 
-        // Attempt to play audio with sound on user interaction
+        // Audio
         audio.play().catch(() => {
           console.warn('Autoplay failed, user interaction is required to play audio.');
         });
 
-        // Optional: try fullscreen to emulate immersive experience
+        // FullScreen
         if (document.documentElement.requestFullscreen) {
           document.documentElement.requestFullscreen();
         }
