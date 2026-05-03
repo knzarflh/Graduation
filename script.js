@@ -166,23 +166,47 @@ function initNavigation() {
   });
 }
 
-// ===== COVER / OPEN LETTER =====
+// ===== COVER / OPEN LETTER & AUTH =====
 function initCover() {
   const coverPage = document.querySelector('.cover-page');
   const mainContent = document.querySelector('.main-content');
   const openBtn = document.querySelector('.open-btn');
+  const authOverlay = document.getElementById('auth-overlay');
+  const submitAuthBtn = document.getElementById('submit-auth-btn');
+  const kanzaDob = document.getElementById('kanza-dob');
+  const maydaDob = document.getElementById('mayda-dob');
+  const authError = document.getElementById('auth-error');
 
-  if (!openBtn) return;
+  if (!openBtn || !authOverlay) return;
 
+  // 1. Tampilkan overlay autentikasi saat tombol ditekan
   openBtn.addEventListener('click', () => {
-    coverPage.classList.add('hidden');
-    setTimeout(() => {
-      mainContent.classList.add('visible');
-      document.body.style.overflow = 'auto';
-      launchConfetti();
-      initScrollReveal();
-      initNavigation();
-    }, 800);
+    authOverlay.classList.add('show');
+  });
+
+  // 2. Validasi kata sandi (tanggal lahir)
+  submitAuthBtn.addEventListener('click', () => {
+    // kanza: 3 Januari 2007 -> "2007-01-03"
+    // mayda: 3 Desember 2006 -> "2006-12-03"
+    if (kanzaDob.value === '2007-01-03' && maydaDob.value === '2006-12-03') {
+      // Jika benar: sembunyikan overlay & cover page, munculkan main content
+      authOverlay.classList.remove('show');
+      coverPage.classList.add('hidden');
+      
+      setTimeout(() => {
+        mainContent.classList.add('visible');
+        document.body.style.overflow = 'auto';
+        launchConfetti();
+        initScrollReveal();
+        initNavigation();
+      }, 800);
+    } else {
+      // Jika salah: tampilkan pesan error
+      authError.classList.add('show');
+      setTimeout(() => {
+        authError.classList.remove('show');
+      }, 3000); // hilangkan pesan setelah 3 detik
+    }
   });
 
   // Prevent scroll until opened
@@ -206,9 +230,122 @@ function initMusic() {
   });
 }
 
+// ===== IMAGE LIGHTBOX MODAL =====
+function initImageModal() {
+  const modal = document.getElementById('imageModal');
+  const modalImg = document.getElementById('modalImg');
+  const closeModal = document.querySelector('.close-modal');
+  const clickableImages = document.querySelectorAll('.clickable-image');
+
+  if (!modal || !modalImg) return;
+
+  clickableImages.forEach(img => {
+    img.addEventListener('click', function() {
+      modal.style.display = 'flex';
+      // Use a slight delay to allow display: flex to apply before adding class for transition
+      setTimeout(() => {
+        modal.classList.add('show');
+      }, 10);
+      modalImg.src = this.src;
+    });
+  });
+
+  const close = () => {
+    modal.classList.remove('show');
+    setTimeout(() => {
+      modal.style.display = 'none';
+    }, 300); // match css transition duration
+  };
+
+  if (closeModal) {
+    closeModal.addEventListener('click', close);
+  }
+
+  // Close when clicking outside the image
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) {
+      close();
+    }
+  });
+}
+
+// ===== COVERFLOW CAROUSEL (INFINITE) =====
+function initCoverflow() {
+  const track = document.querySelector('.carousel-track');
+  let originalItems = Array.from(document.querySelectorAll('.carousel-item'));
+  if (!track || originalItems.length === 0) return;
+
+  const originalCount = originalItems.length;
+  // Clone agar seakan tak terbatas (60 set = 300 elemen)
+  const numSets = 60;
+  for (let i = 0; i < numSets - 1; i++) {
+    originalItems.forEach(item => {
+      track.appendChild(item.cloneNode(true));
+    });
+  }
+
+  const allItems = Array.from(document.querySelectorAll('.carousel-item'));
+
+  function updateCards() {
+    const trackCenter = track.offsetWidth / 2;
+    const scrollLeft = track.scrollLeft;
+    
+    allItems.forEach(item => {
+      // Optimisasi: Abaikan elemen yang jauh dari layar
+      const itemOffset = item.offsetLeft - scrollLeft;
+      if (itemOffset < -600 || itemOffset > track.offsetWidth + 600) {
+        item.style.opacity = '0';
+        return;
+      }
+
+      const itemCenter = itemOffset + item.offsetWidth / 2;
+      const distanceFromCenter = itemCenter - trackCenter;
+      
+      const normalizedDist = distanceFromCenter / 160; 
+      
+      const scale = Math.max(0.6, 1 - Math.abs(normalizedDist) * 0.15);
+      const rotateY = normalizedDist * -35; 
+      const zIndex = Math.round(100 - Math.abs(normalizedDist) * 10);
+      const opacity = Math.max(0.4, 1 - Math.abs(normalizedDist) * 0.3);
+
+      item.style.transform = `perspective(1000px) rotateY(${rotateY}deg) scale(${scale})`;
+      item.style.zIndex = zIndex;
+      item.style.opacity = opacity;
+    });
+  }
+
+  // Sembunyikan sebentar saat inisialisasi agar lompatan awal ke tengah tidak terlihat
+  track.style.opacity = '0';
+  
+  setTimeout(() => {
+    // Mulai dari set ke-30 (tengah-tengah)
+    const middleIndex = 30 * originalCount;
+    if (allItems[middleIndex]) {
+      const target = allItems[middleIndex];
+      // Posisikan scroll agar item tersebut tepat di tengah
+      track.scrollLeft = target.offsetLeft - track.offsetWidth / 2 + target.offsetWidth / 2;
+    }
+    updateCards();
+    
+    // Munculkan kembali dengan smooth
+    track.style.transition = 'opacity 0.5s ease';
+    track.style.opacity = '1';
+  }, 50);
+
+  track.addEventListener('scroll', () => {
+    requestAnimationFrame(updateCards);
+  });
+  
+  window.addEventListener('resize', () => {
+    requestAnimationFrame(updateCards);
+  });
+}
+
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
   initParticles();
   initCover();
   initMusic();
+  initImageModal();
+  initCoverflow();
 });
