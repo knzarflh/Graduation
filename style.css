@@ -132,9 +132,11 @@ nav ul li a:hover::after, nav ul li a.active::after {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  /* justify-content: center dihilangkan agar konten tidak terpotong di atas saat overflow */
   background: var(--bg-gradient);
   transition: all 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .cover-page.hidden {
@@ -146,6 +148,8 @@ nav ul li a:hover::after, nav ul li a.active::after {
 .cover-content {
   text-align: center;
   max-width: 90%;
+  margin: auto; /* Memusatkan secara vertikal jika ada sisa space, menjaga padding jika penuh */
+  padding: 3rem 0;
 }
 
 .cover-greeting {
@@ -163,26 +167,59 @@ nav ul li a:hover::after, nav ul li a.active::after {
   margin-bottom: 2rem;
 }
 
-.cover-image-wrapper {
-  width: 220px; height: 280px;
+.cover-carousel {
+  width: 100%;
+  max-width: 100vw; /* Lebar penuh layar untuk scroll yang lega */
   margin: 0 auto 3rem;
+  overflow: hidden; /* Sembunyikan tumpahan di luar container utama */
+}
+
+.carousel-track {
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 3rem calc(50% - 110px); /* Center item pertama dan terakhir */
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-item {
+  flex: 0 0 220px;
+  height: 280px;
+  margin: 0 -30px; /* Margin negatif untuk efek menumpuk */
   border-radius: 30px;
   overflow: hidden;
   border: 4px solid #fff;
-  box-shadow: var(--shadow-lg);
-  background: #fff;
-  position: relative;
-  transform: rotate(-3deg);
-  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+  background: #f1f5f9;
+  scroll-snap-align: center;
+  transition: transform 0.1s ease-out, opacity 0.1s ease-out;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+  cursor: pointer;
 }
 
-.cover-image-wrapper:hover {
-  transform: rotate(0deg) scale(1.05);
-}
-
-.cover-image-wrapper img {
+.carousel-item img {
   width: 100%; height: 100%;
   object-fit: cover;
+  pointer-events: none;
+}
+
+.carousel-placeholder {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 1.2rem;
+  pointer-events: none;
 }
 
 .open-btn {
@@ -435,4 +472,167 @@ section {
   .section-title { font-size: 2.2rem; }
   .intro-card { padding: 2.5rem; }
   .closing-card { padding: 3.5rem 1.5rem; }
+}
+
+/* ===== IMAGE MODAL ===== */
+.modal {
+  display: none; 
+  position: fixed; 
+  z-index: 3000; 
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow: auto; 
+  background-color: rgba(0,0,0,0.8); 
+  backdrop-filter: blur(5px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modal.show {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 1;
+}
+
+.modal-content {
+  margin: auto;
+  display: block;
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  transform: scale(0.8);
+  transition: transform 0.3s ease;
+}
+
+.modal.show .modal-content {
+  transform: scale(1);
+}
+
+.close-modal {
+  position: absolute;
+  top: 20px;
+  right: 35px;
+  color: #f1f1f1;
+  font-size: 40px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  z-index: 3001;
+}
+
+.close-modal:hover,
+.close-modal:focus {
+  color: var(--primary);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* ===== AUTH OVERLAY ===== */
+.auth-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(10px);
+  z-index: 4000;
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.auth-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.auth-card {
+  background: var(--card-bg);
+  padding: 3rem;
+  border-radius: 30px;
+  box-shadow: var(--shadow-lg);
+  max-width: 90%;
+  width: 400px;
+  text-align: center;
+  transform: translateY(30px) scale(0.95);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  margin: auto; /* Memusatkan form ke tengah jika space cukup */
+}
+
+.auth-overlay.show .auth-card {
+  transform: translateY(0) scale(1);
+}
+
+.auth-card h3 {
+  font-size: 1.4rem;
+  color: var(--text-main);
+  margin-bottom: 2rem;
+  font-family: 'Playfair Display', serif;
+}
+
+.input-group {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.input-group label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s;
+  color: var(--text-main);
+}
+
+.input-group input:focus {
+  border-color: var(--primary);
+}
+
+.error-msg {
+  color: #ef4444;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.error-msg.show {
+  opacity: 1;
+}
+
+.submit-auth-btn {
+  width: 100%;
+  padding: 1rem;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 100px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.submit-auth-btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -5px rgba(245, 158, 11, 0.5);
 }
