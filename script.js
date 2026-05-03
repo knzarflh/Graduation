@@ -186,15 +186,9 @@ function initCover() {
 
   // 2. Validasi kata sandi (tanggal lahir)
   submitAuthBtn.addEventListener('click', () => {
-    // Normalisasi teks: ubah ke huruf kecil, hapus spasi di awal/akhir, dan ganti spasi ganda jadi spasi tunggal
-    const kanzaVal = kanzaDob.value.toLowerCase().trim().replace(/\s+/g, ' ');
-    const maydaVal = maydaDob.value.toLowerCase().trim().replace(/\s+/g, ' ');
-
-    // Daftar variasi penulisan yang dianggap benar
-    const kanzaValid = ['3 januari 2007', '03 januari 2007', '3 jan 2007', '03 jan 2007', '3-1-2007', '03-01-2007', '3/1/2007', '03/01/2007', '2007-01-03'];
-    const maydaValid = ['3 desember 2006', '03 desember 2006', '3 des 2006', '03 des 2006', '3-12-2006', '03-12-2006', '3/12/2006', '03/12/2006', '2006-12-03'];
-
-    if (kanzaValid.includes(kanzaVal) && maydaValid.includes(maydaVal)) {
+    // kanza: 3 Januari 2007 -> "2007-01-03"
+    // mayda: 3 Desember 2006 -> "2006-12-03"
+    if (kanzaDob.value === '2007-01-03' && maydaDob.value === '2006-12-03') {
       // Jika benar: sembunyikan overlay & cover page, munculkan main content
       authOverlay.classList.remove('show');
       coverPage.classList.add('hidden');
