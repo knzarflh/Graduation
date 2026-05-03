@@ -38,10 +38,29 @@
     <div class="cover-content">
       <div class="cover-greeting">Hai Mayda!</div>
       <div class="cover-emoji">🎉✨</div>
-      <div class="cover-image-wrapper">
-        <!-- Ganti src dengan foto cover -->
-        <div style="display:flex; height:100%; align-items:center; justify-content:center; color:#64748b; background:#f1f5f9;">
-          <span>📷 Foto Cover</span>
+      <div class="cover-carousel">
+        <div class="carousel-track">
+          <!-- Tambahkan foto-foto di sini -->
+          <div class="carousel-item">
+            <div class="carousel-placeholder"><span>📷 Foto 1</span></div>
+            <!-- <img src="foto1.jpg" alt="Cover 1"> -->
+          </div>
+          <div class="carousel-item">
+            <div class="carousel-placeholder"><span>📷 Foto 2</span></div>
+            <!-- <img src="foto2.jpg" alt="Cover 2"> -->
+          </div>
+          <div class="carousel-item">
+            <div class="carousel-placeholder"><span>📷 Foto 3</span></div>
+            <!-- <img src="foto3.jpg" alt="Cover 3"> -->
+          </div>
+          <div class="carousel-item">
+            <div class="carousel-placeholder"><span>📷 Foto 4</span></div>
+            <!-- <img src="foto4.jpg" alt="Cover 4"> -->
+          </div>
+          <div class="carousel-item">
+            <div class="carousel-placeholder"><span>📷 Foto 5</span></div>
+            <!-- <img src="foto5.jpg" alt="Cover 5"> -->
+          </div>
         </div>
       </div>
       <button class="open-btn" id="open-btn">Buka Surat Spesial 💌</button>
@@ -55,6 +74,27 @@
     <div class="bar"></div>
     <div class="bar"></div>
   </button>
+
+  <!-- ===== AUTH OVERLAY ===== -->
+  <div class="auth-overlay" id="auth-overlay">
+    <div class="auth-card">
+      <h3>Eitss tunggu ada kata sandinya 🤫</h3>
+      
+      <div class="input-group">
+        <label for="kanza-dob">Masukkan tanggal lahir kanza</label>
+        <input type="date" id="kanza-dob" required>
+      </div>
+      
+      <div class="input-group">
+        <label for="mayda-dob">Masukkan tanggal lahir mayda</label>
+        <input type="date" id="mayda-dob" required>
+      </div>
+      
+      <p class="error-msg" id="auth-error">Tanggal lahir salah, coba lagi ya!</p>
+      
+      <button class="submit-auth-btn" id="submit-auth-btn">Masuk ✨</button>
+    </div>
+  </div>
 
   <!-- ===== MAIN CONTENT ===== -->
   <div class="main-content">
@@ -75,16 +115,16 @@
     <section class="timeline-section">
 
       <!-- 1. Fotbar Pertama -->
-      <!-- 1. Fotbar Pertama -->
-<div class="timeline-item">
-  <div class="timeline-card">
-    <span class="timeline-number">01</span>
-    <h3>Fotbar Pertama</h3>
-    <!-- Ganti baris di bawah ini -->
-    <img src="1fotbar1.jpg" alt="Fotbar Pertama" class="timeline-img">
-    <p>Inget ngga foto ini?? Fotbar pertama kita...</p>
-  </div>
-</div>
+      <div class="timeline-item">
+        <div class="timeline-card">
+          <span class="timeline-number">01</span>
+          <h3>Fotbar Pertama</h3>
+          <div class="photo-placeholder">
+            <img src="1fotbar1.jpg" alt="Fotbar Pertama" class="clickable-image" style="cursor: pointer;">
+          </div>
+          <p>Inget ngga foto ini?? Fotbar pertama kita (yang niat) dan pada hari itu jadi tanggal dimana awal kita bakal jarang ketemu lagi karena uda beda sekolah, dan foto itu kita post di InstaStory sampai akhirnya rame banget dm kita wkwkwk.</p>
+        </div>
+      </div>
 
       <!-- 2. Aku Suka Kalimatmu -->
       <div class="timeline-item">
@@ -358,6 +398,12 @@
       </div>
     </section>
 
+  </div>
+
+  <!-- Image Modal -->
+  <div id="imageModal" class="modal">
+    <span class="close-modal">&times;</span>
+    <img class="modal-content" id="modalImg">
   </div>
 
   <script src="script.js"></script>
